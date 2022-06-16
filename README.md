@@ -17,3 +17,25 @@ conda activate venv/
 conda env list
 """
 pip install -r requirements.txt
+To add files to git
+"""
+git add .   or the file name instead of .
+"""
+Note: To ignore file or folder from git we can write the name of the file/folder in the .gitignore file
+"""
+To check all versions maintained by git
+"""
+git log
+"""
+To create a version/commit all changes by git
+"""
+git commit -m "message"
+"""
+To send version/changes to github
+"""
+git push origin main
+"""
+To check remote url
+"""
+git remote -v
+"""
