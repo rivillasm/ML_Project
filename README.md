@@ -5,6 +5,7 @@
 2. [Heroku account](https://dashboard.heroku.com/login)
 3. [Pycharm IDE]
 4. [GIT cli](https://git-scm.com/downloads)
+5. [GIT tutorial](https://git-scm.com/docs/gittutorial)
 
 Creating conda environment
 """
@@ -39,3 +40,32 @@ To check remote url
 """
 git remote -v
 """
+DEPLOYEMENT - To setup CI/CD pipleine in Heroku we need 3 thins:
+1. HEROKU API Key: 4605a4c2-e45d-4de0-8f0f-aeabf48fa174
+2. HEROKU email: rivillasm@gmail.com
+3. HEROKU APP NAME : ml-project-app0
+"""
+Create and populate the Dockerfile and the .dockerignore file
+"""
+BUILD DOCKER IMAGE
+"""
+docker build -t <image_name>:<tagname> .
+"""
+Note - image name is all lower case and the dot means the location where the dockerfile is located
+tagname can be any
+"""
+To list docker image
+"""
+docker images
+"""
+run docker image
+"""
+docker run -p 5000:5000 -e PORT=5000 5b78ed2614c0
+"""
+To check running containers in docker
+"""
+docker ps
+"""
+to stop the container
+docker stop container_id
+""""
