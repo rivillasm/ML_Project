@@ -13,7 +13,7 @@ jobs:
     steps:
     # check out repository
     - name: Checkout
-      uses: actions/checout@v2
+      uses: actions/checkout@v2
 
 # important part
     - name: Build, Push and Release a Docker container to Heroku # your custome name of the image
