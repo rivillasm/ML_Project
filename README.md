@@ -41,9 +41,9 @@ To check remote url
 git remote -v
 """
 DEPLOYEMENT - To setup CI/CD pipleine in Heroku we need 3 thins:
-1. HEROKU API Key: 4605a4c2-e45d-4de0-8f0f-aeabf48fa174
-2. HEROKU email: rivillasm@gmail.com
-3. HEROKU APP NAME : ml-project-app0
+1. HEROKU_API_KEY: to_add
+2. HEROKU_EMAIL: rivillasm@gmail.com
+3. HEROKU_APP_NAME : ml-project-app0
 """
 Create and populate the Dockerfile and the .dockerignore file
 """
