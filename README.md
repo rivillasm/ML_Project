@@ -68,4 +68,8 @@ docker ps
 """
 to stop the container
 docker stop container_id
-""""
+"""
+
+"""
+python setup.py install
+"""

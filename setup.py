@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from typing import List
 
 
@@ -9,7 +9,8 @@ PROJECT_NAME = "housing_predictor"
 VERSION = "0.0.1"            # any sequential number
 AUTHOR = "Mario"
 DESCRIPTION = "First FSDS batch ML project"
-PACKAGES = ["housing"]        # specify the folder name
+PACKAGES = find_packages()  # expecting "housing" the folder name,
+                            # it will automatically find folderes(PACKAGES) holding an _init__.py file
 REQUIREMENT_FILE_NAME="requirements.txt"
 
 def get_requirements_list()->List[str]:
@@ -20,7 +21,7 @@ def get_requirements_list()->List[str]:
     return: a list which will contain name of libraries mentioned in the file
     """
     with open(REQUIREMENT_FILE_NAME) as requirement_file:
-        return requirement_file.readlines()
+        return requirement_file.readlines().remove("-e .")
 
 setup(
     name=PROJECT_NAME,
