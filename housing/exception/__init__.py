@@ -1,6 +1,5 @@
 
 import sys
-import os
 
 class HousingException(Exception):    # getting exceptio from the father class
 
