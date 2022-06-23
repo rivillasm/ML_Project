@@ -5,7 +5,7 @@ import os
 class HousingException(Exception):    # getting exceptio from the father class
 
     def __init__(self, error_message:Exception, error_detail:sys):   # gets error message and details
-        super().__init(error_message)                                     # passes the mesage to the exception class
+        super().__init__(error_message)                                     # passes the mesage to the exception class
         self.error_message=HousingException.get_detailed_error_message(error_message=error_message,
                                                                        error_detail=error_detail)
 
