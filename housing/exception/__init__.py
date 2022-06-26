@@ -21,8 +21,12 @@ class HousingException(Exception):    # getting exceptio from the father class
         error_message = f"Error occured in script:[{file_name} at line number [{line_number}] error message [{error_message}]]"
         return error_message
 
-    def __str__(self):
-        return self.error_message
+    def __str__(self):                # use the method to customize the string representation of an
+        return self.error_message     # instance of a class
 
-    def __repr__(self)-> str:
+    def __repr__(self) -> str:
         return HousingException.__name__.str()
+    # The __str__ method
+    # returns a string representation of an object that is human-readable
+    # while the __repr__ method
+    # returns a string representation of an object that is machine-readable.
