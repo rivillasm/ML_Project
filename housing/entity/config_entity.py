@@ -16,3 +16,8 @@ DataTransformationConfig = namedtuple("DataTransformationConfig",
 modelTrainerConfig = namedtuple("modelTrainerConfig",
         ["trained_model_file_path","base_accuracy"])
 # trained_model_file_path - trained model pickle file location
+
+modelEvaluationConfig = namedtuple("modelEvaluationConfig",
+        ["model_evaluation_file_path","time_stamp"])
+
+modelPusherConfig = namedtuple("modelPusherConfig", ["expert_dir_path"])
