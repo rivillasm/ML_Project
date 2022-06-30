@@ -29,6 +29,7 @@ class Configuration:
             data_ingestion_info = self.config_info[DATA_INGESTION_CONFIG_KEY]   # all info related to data ingestion
 
             dataset_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]   # extracts the url
+
             tgz_download_dir = os.path.join(
                         data_ingestion_artifact_dir,
                         data_ingestion_info[DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY])  # creates path for the data download
@@ -41,15 +42,23 @@ class Configuration:
                         data_ingestion_artifact_dir,
                         data_ingestion_info[DATA_INGESTION_DIR_NAME_KEY])           # creates path for data ingested
 
+            ingested_train_dir = os.path.join(
+                        ingested_data_dir,
+                        data_ingestion_info[DATA_INGESTION_TRAIN_DIR_KEY])
 
-            self.config_info
+            ingested_test_dir = os.path.join(
+                        ingested_data_dir,
+                        data_ingestion_info[DATA_INGESTION_TEST_DIR_KEY])
+
             data_ingestion_config = DataIngestionConfig(
-                dataset_download_url=,
-                tgz_download_dir=,
-                raw_data_dir=,
-                ingested_train_dir=,
-                ingested_test_dir=)
+                dataset_download_url=dataset_download_url,
+                tgz_download_dir=tgz_download_dir,
+                raw_data_dir=raw_data_dir,
+                ingested_train_dir=ingested_train_dir,
+                ingested_test_dir=ingested_test_dir)
+
             logging.info(f"Data Ingestion config: {data_ingestion_config}")
+            return data_ingestion_config
 
         except Exception as e:
             raise HousingException(e,sys) from e
