@@ -8,8 +8,8 @@ from housing.logger import logging
 
 class Configuration:
 
-    def __init__(self, config_file_path:str =CONFIG_FILE_PATH,
-                       current_time_stamp:str =CURRENT_TIME_STAMP) -> None:
+    def __init__(self, config_file_path:str = CONFIG_FILE_PATH,
+                       current_time_stamp:str = CURRENT_TIME_STAMP) -> None:
         try:
             self.config_info = read_yaml_file(config_file_path)
             self.get_training_pipeline_config = self.get_training_pipeline_config()
@@ -78,7 +78,7 @@ class Configuration:
     def get_model_pusher_config(self) -> modelPusherConfig:
         pass
 
-    def get_training_pipeline_config(self)-> TrainingPipelineConfig :
+    def get_training_pipeline_config(self) -> TrainingPipelineConfig:
         try:
             training_pipeline_config = self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
             artifact_dir = os.path.join(ROOT_DIR,
