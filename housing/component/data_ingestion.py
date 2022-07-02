@@ -66,7 +66,7 @@ class DataIngestion:
             file_name = os.listdir(raw_data_dir)[0]             # gets the name of the first file in the list
 
             housing_file_path = os.path.join(raw_data_dir, file_name)
-            housing_data_frame = pd.read_csv(housing_file_path)
+            housing_data_frame = pd.read_csv(housing_file_path)  # reads the file
 
             # Bin values into discrete intervals.
             housing_data_frame["income_cat"] = pd.cut(housing_data_frame["median_income"],
@@ -78,14 +78,29 @@ class DataIngestion:
             strat_test_set = None
             split = StratifiedShuffleSplit(n_splits=1, test_size=0,2, random_state=42)
             for train_index, test_index in split.split(housing_data_frame,housing_data_frame["income_cat"]):
-                strat_train_set=housing_data_frame.iloc[train_index].drop(["income_cat"], axis=1)
+                strat_train_set = housing_data_frame.iloc[train_index].drop(["income_cat"], axis=1)
                 strat_test_set = housing_data_frame.iloc[test_index].drop(["income_cat"], axis=1)
 
             # create the files path
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, file_name)
             test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir, file_name)
 
+            # creates directories
+            if strat_train_set is not None:
+                os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
+                logging.info(f"Exporting training dataset to file: [{train_file_path}]")
+                strat_train_set.to_csv(train_file_path, index=False)         # export the train data into the folder
+            if strat_test_set is not None:
+                os.makedirs(self.data_ingestion_config.ingested_test_dir, exist_ok=True)
+                logging.info(f"Exporting test dataset to file: [{test_file_path}]")
+                strat_test_set.to_csv(test_file_path, index=False)          # exports the test data into the folder
 
+            data_ingestion_artifact = DataIngestionArtifact(train_file_path=train_file_path,
+                                                            test_file_path=test_file_path,
+                                                            is_ingested=True,
+                                                            message=f"Data Ingestion completed successfully")
+            logging.info(f"Data Ingestion artifact: [{data_ingestion_artifact}]")
+            return  data_ingestion_artifact
 
         except Exception as e:
             raise HousingException(e, sys) from e
@@ -96,5 +111,10 @@ class DataIngestion:
         try:
             tgz_file_path = self.download_housing_data()          # gets the file location and downloads it
             self.extract_tgz_file(tgz_file_path=tgz_file_path)
+            return self.split_data_as_train_test()
+
         except Exception as e:
             raise HousingException(e,sys) from e
+
+    def __del__(self):
+        logging.info(f"{'='*20} Data Ingestion Completed {'='*20} \n\n")
