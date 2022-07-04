@@ -118,3 +118,4 @@ class DataIngestion:
 
     def __del__(self):
         logging.info(f"{'='*20} Data Ingestion Completed {'='*20} \n\n")
+        logging.info(f"{'='*20} Data Ingestion Completed {'='*20} \n\n")
