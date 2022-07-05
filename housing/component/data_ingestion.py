@@ -71,15 +71,15 @@ class DataIngestion:
             # Bin values into discrete intervals.
             housing_data_frame["income_cat"] = pd.cut(housing_data_frame["median_income"],
                                                       bins=[0.0,1.5,3.0,4.5,6.0,np.inf],
-                                                      labels[1,2,3,4,5])
+                                                      labels=[1,2,3,4,5])
 
             # split the data inot training and test
             strat_train_set = None
             strat_test_set = None
-            split = StratifiedShuffleSplit(n_splits=1, test_size=0,2, random_state=42)
+            split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)   #keeps the feature distribution
             for train_index, test_index in split.split(housing_data_frame,housing_data_frame["income_cat"]):
-                strat_train_set = housing_data_frame.iloc[train_index].drop(["income_cat"], axis=1)
-                strat_test_set = housing_data_frame.iloc[test_index].drop(["income_cat"], axis=1)
+                strat_train_set = housing_data_frame.loc[train_index].drop(["income_cat"], axis=1)
+                strat_test_set = housing_data_frame.loc[test_index].drop(["income_cat"], axis=1)
 
             # create the files path
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir, file_name)
