@@ -31,17 +31,33 @@ class DataValidation:
             is_available = is_train_file_exist and is_test_file_exist           # returns true or false
             logging.info(f"Is train and test file exists?-> {is_available}")
 
+            if not is_available:
+                training_file = self.data_ingestion_artifact.train_file_path
+                testing_file = self.data_ingestion_artifact.test_file_path
+                message = f"Training file {training_file} or Testing file {testing_file} is not present"
+                raise Exception(message)
+
             return is_available
         except Exception as e:
             raise HousingException(e, sys) from e
 
+
+    def validate_dataset_schema(self)->bool:
+        try:
+            validation_status = False
+            validation_status = True
+
+            # ***** PUT ASSIGNMENT HERE
+
+
+            return validation_status
+        except Exception as e:
+            raise HousingException(e, sys) from e
+
+
     def initiate_data_validation(self):
         try:
-            is_available = self.is_train_test_file_exists()
-            if not is_available:
-                training_file =
-                testing_file =
-                message = f""
-                raise Exception("Trainig or Testing file is not available")
+            self.is_train_test_file_exists()
+            self.validate_dataset_schema()
         except Exception as e:
             raise HousingException(e, sys) from e
