@@ -75,3 +75,4 @@ python setup.py install
 """
 pip install ipykernel
 """
+Data Drift : when  your dataset stats gets changes 
