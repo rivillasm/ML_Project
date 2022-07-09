@@ -1,10 +1,12 @@
 from housing.logger import logging
 from housing.exception import HousingException
 from housing.entity.config_entity import DataValidationConfig
-from housing.entity.artifact_entity import DataIngestionArtifact
+from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
 import os, sys
 from evidently.model_profile import Profile
 from evidently.model_profile.sections import DataDriftProfileSection
+from evidently.dashboard import Dashboard     # used for graphs
+from evidently.dashboard.tabs import DataDriftTab
 import pandas as pd
 import json
 
@@ -83,7 +85,10 @@ class DataValidation:
 
             report = json.loads(profile.json())  # used to parse a JSON string and convert it into a dictionary
 
-            with open(self.data_validation_config.report_file_path,"w") as report_file:
+            report_file_path = self.data_validation_config.report_file_path
+            report_dir = os.path.dirname(report_file_path)
+            os.makedirs(report_dir,exist_ok=True)
+            with open(report_file_path,"w") as report_file:
                 json.dump(report, report_file, indent=6)   # saves the report
 
             return report
@@ -93,23 +98,47 @@ class DataValidation:
 
     def save_data_drift_report_page(self):
         try:
-            pass
+            dashboard = Dashboard(tabs=DataDriftTab())
+            train_df, test_df = self.get_train_and_test_df()
+            dashboard.calculate(train_df,test_df)
+
+            report_page_file_path = self.data_validation_config.report_page_file_path
+            report_page_dir = os.path.dirname(report_page_file_path)
+            os.makedirs(report_page_dir, exist_ok=True)
+
+            dashboard.save(report_page_file_path)
+
         except Exception as e:
             raise HousingException(e, sys) from e
 
     def is_data_drift_found(self)->bool:
         try:
-            pass
+            report = self.get_and_save_data_drift_report()
+            self.save_data_drift_report_page()
+
+            return True
+
         except Exception as e:
             raise HousingException(e, sys) from e
 
 
 
 
-    def initiate_data_validation(self):
+    def initiate_data_validation(self)->DataValidationArtifact:
         try:
             self.is_train_test_file_exists()
             self.validate_dataset_schema()
             self.is_data_drift_found()
+
+            data_validation_artifact = DataValidationArtifact(
+                schema_file_path=self.data_validation_config.schema_file_path,
+                report_file_path=self.data_validation_config.report_file_path,
+                report_page_file_path=self.data_validation_config.report_page_file_path,
+                is_valiedated=True,
+                message="Data Validation performed successfully")
+
+            logging.info(f"Data validation artifact: {data_validation_artifact}")
+
+
         except Exception as e:
             raise HousingException(e, sys) from e
