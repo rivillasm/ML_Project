@@ -5,24 +5,22 @@ from housing.entity.artifact_entity import DataIngestionArtifact, DataValidation
 import os, sys
 from evidently.model_profile import Profile
 from evidently.model_profile.sections import DataDriftProfileSection
-from evidently.dashboard import Dashboard     # used for graphs
+from evidently.dashboard import Dashboard  # used for graphs
 from evidently.dashboard.tabs import DataDriftTab
 import pandas as pd
 import json
 
 
-
 class DataValidation:
 
-    def __init__(self, data_validation_config : DataValidationConfig,
-                       data_ingestion_artifact : DataIngestionArtifact):
+    def __init__(self, data_validation_config: DataValidationConfig,
+                 data_ingestion_artifact: DataIngestionArtifact):
         try:
             self.data_validation_config = data_validation_config
             self.data_ingestion_artifact = data_ingestion_artifact
 
         except Exception as e:
             raise HousingException(e, sys) from e
-
 
     def get_train_and_test_df(self):
         try:
@@ -33,22 +31,19 @@ class DataValidation:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
-
-
     # check if the training/test files are available
-    def is_train_test_file_exists(self)->bool:
+    def is_train_test_file_exists(self) -> bool:
         try:
             logging.info("Checking if train/test file exists")
             is_train_file_exist = False
             is_test_file_exist = False
-            train_file_path = self.data_ingestion_artifact.train_file_path      # gets the paths
+            train_file_path = self.data_ingestion_artifact.train_file_path  # gets the paths
             test_file_path = self.data_ingestion_artifact.test_file_path
 
             is_train_file_exist = os.path.exists(train_file_path)
             is_test_file_exist = os.path.exists(test_file_path)
 
-            is_available = is_train_file_exist and is_test_file_exist           # returns true or false
+            is_available = is_train_file_exist and is_test_file_exist  # returns true or false
             logging.info(f"Is train and test file exists?-> {is_available}")
 
             if not is_available:
@@ -61,35 +56,32 @@ class DataValidation:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
-    def validate_dataset_schema(self)->bool:
+    def validate_dataset_schema(self) -> bool:
         try:
             validation_status = False
             validation_status = True
 
             # ***** PUT ASSIGNMENT HERE
 
-
             return validation_status
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
     def get_and_save_data_drift_report(self):
         try:
-            profile = Profile(sections=[DataDriftProfileSection])  # creates an object from the Profile library
+            profile = Profile(sections=[DataDriftProfileSection()])  # creates an object from the Profile library
 
             train_df, test_df = self.get_train_and_test_df()  # gets the datasets
 
-            profile.calculate(train_df,test_df)  # calculates profile
+            profile.calculate(train_df, test_df)  # calculates profile
 
             report = json.loads(profile.json())  # used to parse a JSON string and convert it into a dictionary
 
             report_file_path = self.data_validation_config.report_file_path
             report_dir = os.path.dirname(report_file_path)
-            os.makedirs(report_dir,exist_ok=True)
-            with open(report_file_path,"w") as report_file:
-                json.dump(report, report_file, indent=6)   # saves the report
+            os.makedirs(report_dir, exist_ok=True)
+            with open(report_file_path, "w") as report_file:
+                json.dump(report, report_file, indent=6)  # saves the report
 
             return report
 
@@ -98,9 +90,9 @@ class DataValidation:
 
     def save_data_drift_report_page(self):
         try:
-            dashboard = Dashboard(tabs=DataDriftTab())
+            dashboard = Dashboard(tabs=[DataDriftTab()])
             train_df, test_df = self.get_train_and_test_df()
-            dashboard.calculate(train_df,test_df)
+            dashboard.calculate(train_df, test_df)
 
             report_page_file_path = self.data_validation_config.report_page_file_path
             report_page_dir = os.path.dirname(report_page_file_path)
@@ -111,7 +103,7 @@ class DataValidation:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def is_data_drift_found(self)->bool:
+    def is_data_drift_found(self) -> bool:
         try:
             report = self.get_and_save_data_drift_report()
             self.save_data_drift_report_page()
@@ -121,10 +113,7 @@ class DataValidation:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
-
-
-    def initiate_data_validation(self)->DataValidationArtifact:
+    def initiate_data_validation(self) -> DataValidationArtifact:
         try:
             self.is_train_test_file_exists()
             self.validate_dataset_schema()
@@ -134,11 +123,11 @@ class DataValidation:
                 schema_file_path=self.data_validation_config.schema_file_path,
                 report_file_path=self.data_validation_config.report_file_path,
                 report_page_file_path=self.data_validation_config.report_page_file_path,
-                is_valiedated=True,
+                is_validated=True,
                 message="Data Validation performed successfully")
 
             logging.info(f"Data validation artifact: {data_validation_artifact}")
-
+            return data_validation_artifact
 
         except Exception as e:
             raise HousingException(e, sys) from e

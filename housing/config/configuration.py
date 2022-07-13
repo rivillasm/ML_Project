@@ -1,54 +1,53 @@
 from housing.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, \
     modelTrainerConfig, modelEvaluationConfig, modelPusherConfig, TrainingPipelineConfig
 from housing.util.util import read_yaml_file
-from housing.constant import *                 # import all declared functions within this file/library
+from housing.constant import *  # import all declared functions within this file/library
 from housing.exception import HousingException
 import sys, os
 from housing.logger import logging
 
+
 class Configuration:
 
-    def __init__(self, config_file_path:str = CONFIG_FILE_PATH,
-                       current_time_stamp:str = CURRENT_TIME_STAMP) -> None:
+    def __init__(self, config_file_path: str = CONFIG_FILE_PATH, current_time_stamp: str = CURRENT_TIME_STAMP) -> None:
         try:
-            self.config_info = read_yaml_file(config_file_path)
-            self.get_training_pipeline_config = self.get_training_pipeline_config()
+            self.config_info = read_yaml_file(file_path=config_file_path)
+            self.training_pipeline_config = self.get_training_pipeline_config()
             self.time_stamp = current_time_stamp
         except Exception as e:
-            raise HousingException(e,sys) from e
+            raise HousingException(e, sys) from e
 
-
-    def get_data_ingestion_config(self) -> DataIngestionConfig:   # calling the function you get the entity
+    def get_data_ingestion_config(self) -> DataIngestionConfig:  # calling the function you get the entity
         try:
-            artifact_dir=self.training_pipeline_config.artifact_dir         # extracting the artifact directory name
+            artifact_dir = self.training_pipeline_config.artifact_dir  # extracting the artifact directory name
             data_ingestion_artifact_dir = os.path.join(
-                        artifact_dir,
-                        DATA_INGESTION_ARTIFACT_DIR,
-                        self.time_stamp)                                        # creates the entire directory path
+                artifact_dir,
+                DATA_INGESTION_ARTIFACT_DIR,
+                self.time_stamp)  # creates the entire directory path
 
-            data_ingestion_info = self.config_info[DATA_INGESTION_CONFIG_KEY]   # all info related to data ingestion
+            data_ingestion_info = self.config_info[DATA_INGESTION_CONFIG_KEY]  # all info related to data ingestion
 
-            dataset_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]   # extracts the url
+            dataset_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]  # extracts the url
 
             tgz_download_dir = os.path.join(
-                        data_ingestion_artifact_dir,
-                        data_ingestion_info[DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY])  # creates path for the data download
+                data_ingestion_artifact_dir,
+                data_ingestion_info[DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY])  # creates path for the data download
 
             raw_data_dir = os.path.join(
-                        data_ingestion_artifact_dir,
-                        data_ingestion_info[DATA_INGESTION_RAW_DATA_DIR_KEY])      # creates path for raw data
+                data_ingestion_artifact_dir,
+                data_ingestion_info[DATA_INGESTION_RAW_DATA_DIR_KEY])  # creates path for raw data
 
             ingested_data_dir = os.path.join(
-                        data_ingestion_artifact_dir,
-                        data_ingestion_info[DATA_INGESTION_DIR_NAME_KEY])           # creates path for data ingested
+                data_ingestion_artifact_dir,
+                data_ingestion_info[DATA_INGESTION_DIR_NAME_KEY])  # creates path for data ingested
 
             ingested_train_dir = os.path.join(
-                        ingested_data_dir,
-                        data_ingestion_info[DATA_INGESTION_TRAIN_DIR_KEY])
+                ingested_data_dir,
+                data_ingestion_info[DATA_INGESTION_TRAIN_DIR_KEY])
 
             ingested_test_dir = os.path.join(
-                        ingested_data_dir,
-                        data_ingestion_info[DATA_INGESTION_TEST_DIR_KEY])
+                ingested_data_dir,
+                data_ingestion_info[DATA_INGESTION_TEST_DIR_KEY])
 
             data_ingestion_config = DataIngestionConfig(
                 dataset_download_url=dataset_download_url,
@@ -61,16 +60,16 @@ class Configuration:
             return data_ingestion_config
 
         except Exception as e:
-            raise HousingException(e,sys) from e
+            raise HousingException(e, sys) from e
 
     def get_data_validation_config(self) -> DataValidationConfig:
         try:
             artifact_dir = self.training_pipeline_config.artifact_dir  # extracting the artifact directory name
 
             data_validation_artifact_dir = os.path.join(
-                        artifact_dir,
-                        DATA_VALIDATION_ARTIFACT_DIR_NAME,
-                        self.time_stamp)  # creates the entire directory path , based on time stamp
+                artifact_dir,
+                DATA_VALIDATION_ARTIFACT_DIR_NAME,
+                self.time_stamp)  # creates the entire directory path , based on time stamp
 
             # gets all the info keys/values from the dictionary in "config|config.yaml"
             data_validation_config = self.config_info[DATA_VALIDATION_CONFIG_KEY]
@@ -84,7 +83,7 @@ class Configuration:
                                             data_validation_config[DATA_VALIDATION_REPORT_FILE_NAME_KEY])
 
             report_page_file_path = os.path.join(data_validation_artifact_dir,
-                                            data_validation_config[DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY])
+                                                 data_validation_config[DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY])
 
             # input the variable values as indicated in the "housing|entity|config_entity.py" file
             data_validation_config = DataValidationConfig(schema_file_path=schema_file_path,
@@ -101,10 +100,9 @@ class Configuration:
             artifact_dir = self.training_pipeline_config.artifact_dir  # extracting the artifact directory name
 
             data_transformation_artifact_dir = os.path.join(
-                                    artifact_dir,
-                                    DATA_TRANSFORMATION_ARTIFACT_DIR
-                                    self.time_stamp)  # creates the entire directory path , based on time stamp
-
+                artifact_dir,
+                DATA_TRANSFORMATION_ARTIFACT_DIR,
+                self.time_stamp)  # creates the entire directory path , based on time stamp
 
             # gets all the info keys/values from the dictionary in "config|config.yaml"
             data_transformation_config_info = self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
@@ -113,14 +111,14 @@ class Configuration:
 
             # creates the path, by extracting the specific values from the "data_transformation_config"
             preprocessed_object_file_path = os.path.join(
-                                    data_transformation_artifact_dir,
-                                    data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],
-                                    data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY])
+                data_transformation_artifact_dir,
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY])
 
             transformed_train_dir = os.path.join(
-                                    data_transformation_artifact_dir,
-                                    data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
-                                    data_transformation_config_info[DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY])
+                data_transformation_artifact_dir,
+                data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY])
 
             transformed_test_dir = os.path.join(
                 data_transformation_artifact_dir,
@@ -128,10 +126,10 @@ class Configuration:
                 data_transformation_config_info[DATA_TRANSFORMATION_TEST_DIR_NAME_KEY])
 
             data_transformation_config = DataTransformationConfig(
-                                    add_bedroom_per_room = add_bedroom_per_room,
-                                    preprocessed_object_file_path = preprocessed_object_file_path,
-                                    transformed_train_dir = transformed_train_dir,
-                                    transformed_test_dir = transformed_test_dir)
+                add_bedroom_per_room=add_bedroom_per_room,
+                preprocessed_object_file_path=preprocessed_object_file_path,
+                transformed_train_dir=transformed_train_dir,
+                transformed_test_dir=transformed_test_dir)
 
             logging.info(f" Data transformation config: {data_transformation_config}")
             return data_transformation_config
@@ -160,5 +158,4 @@ class Configuration:
             return training_pipeline_config
 
         except Exception as e:
-            raise HousingException(e,sys) from e
-
+            raise HousingException(e, sys) from e

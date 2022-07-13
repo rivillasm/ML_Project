@@ -23,10 +23,7 @@ numerical_columns:
 categorical_columns:
       ocean_proximity
 
-
-
-
-target column: median_house_value
+target_column: median_house_value
 
 # the only categorical feature and the only present values on it
 domain_value:
