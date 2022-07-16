@@ -26,14 +26,13 @@ GridSearchedBestModel = namedtuple("GridSearchedBestModel", ["model_serial_numbe
                                                              "model",
                                                              "best_model",
                                                              "best_parameters",
-                                                             "best_score",
-                                                             ])
+                                                             "best_score"])
 
 BestModel = namedtuple("BestModel", ["model_serial_number",
                                      "model",
                                      "best_model",
                                      "best_parameters",
-                                     "best_score", ])
+                                     "best_score"])
 
 MetricInfoArtifact = namedtuple("MetricInfoArtifact",
                                 ["model_name", "model_object", "train_rmse", "test_rmse", "train_accuracy",

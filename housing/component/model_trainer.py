@@ -69,7 +69,7 @@ class ModelTrainer:
             base_accuracy = self.model_trainer_config.base_accuracy
             logging.info(f"Expected accuracy: {base_accuracy}")
 
-            logging.info(f"Initiating operation model selecttion")
+            logging.info(f"Initiating operation model selection")
             best_model = model_factory.get_best_model(X=x_train, y=y_train, base_accuracy=base_accuracy)
 
             logging.info(f"Best model found on training dataset: {best_model}")
@@ -112,11 +112,11 @@ class ModelTrainer:
     def __del__(self):
         logging.info(f"{'>>' * 30}Model trainer log completed.{'<<' * 30} ")
 
-# loading transformed training and testing datset
+# loading transformed training and testing dataset
 # reading model config file
-# getting best model on training datset
-# evaludation models on both training & testing datset -->model object
-# loading preprocessing pbject
+# getting best model on training dataset
+# evaluation models on both training & testing dataset -->model object
+# loading preprocessing object
 # custom model object by combining both preprocessing obj and model obj
 # saving custom model object
 # return model_trainer_artifact

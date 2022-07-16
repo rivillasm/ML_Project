@@ -1,5 +1,5 @@
 from housing.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, \
-    modelTrainerConfig, modelEvaluationConfig, modelPusherConfig, TrainingPipelineConfig
+    ModelTrainerConfig, ModelEvaluationConfig, ModelPusherConfig, TrainingPipelineConfig
 from housing.util.util import read_yaml_file
 from housing.constant import *  # import all declared functions within this file/library
 from housing.exception import HousingException
@@ -137,7 +137,7 @@ class Configuration:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def get_model_trainer_config(self) -> modelTrainerConfig:
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
         try:
             artifact_dir=self.get_training_pipeline_config.artifact_dir   # gets the address for the artifact folder
 
@@ -163,7 +163,7 @@ class Configuration:
             base_accuracy = model_trainer_config_info[MODEL_TRAINER_BASE_ACCURACY_KEY]
 
             # prepares the object model_trainer_config
-            model_trainer_config = modelTrainerConfig(
+            model_trainer_config = ModelTrainerConfig(
                         trained_model_file_path = trained_model_file_path,
                         base_accuracy = base_accuracy,
                         model_config_file_path = model_config_file_path)
@@ -171,8 +171,25 @@ class Configuration:
             logging.info(f"Model trainer config: {model_trainer_config}")
             return model_trainer_config
 
-    def get_model_evaluation_config(self) -> modelEvaluationConfig:
-        pass
+    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+        try:
+            model_evaluation_config = self.config_info[MODEL_EVALUATION_CONFIG_KEY]
+            artifact_dir = os.path.join(self.training_pipeline_config.artifact_dir,
+                                        MODEL_EVALUATION_ARTIFACT_DIR)
+
+            model_evaluation_file_path = os.path.join(artifact_dir,
+                                                      model_evaluation_config[MODEL_EVALUATION_FILE_NAME_KEY])
+
+            response = ModelEvaluationConfig(model_evaluation_file_path=model_evaluation_file_path,
+                                             time_stamp=self.time_stamp)
+
+            logging.info(f"Model Evaluation Config: {response}.")
+            return response
+
+        except Exception as e:
+            raise HousingException(e, sys) from e
+
+
 
     def get_model_pusher_config(self) -> modelPusherConfig:
         pass
