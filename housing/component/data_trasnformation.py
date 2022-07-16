@@ -99,9 +99,6 @@ class DataTransformation:
             numerical_columns = dataset_schema[NUMERICAL_COLUMN_KEY]
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
 
-            print("numerical:", numerical_columns)
-            print("categorical:",categorical_columns)
-
             num_pipeline = Pipeline(steps=[
                 ("impute", SimpleImputer(strategy="median")),
                 ("feature_generator", FeatureGenerator(
@@ -142,11 +139,15 @@ class DataTransformation:
             schema = read_yaml_file(file_path=schema_file_path)
             target_column_name = schema[TARGET_COLUMN_KEY]
 
+
             logging.info(f"Splitting input/target feature from training/testing dataframes.")
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             target_feature_train_df = train_df[target_column_name]
             input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
             target_feature_test_df = test_df[target_column_name]
+
+            print(input_feature_train_df)
+
 
             logging.info(f"Applying  preprocessing object on training/testing dataframes. ")
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
