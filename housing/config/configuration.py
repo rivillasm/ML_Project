@@ -191,7 +191,7 @@ class Configuration:
 
 
 
-    def get_model_pusher_config(self) -> modelPusherConfig:
+    def get_model_pusher_config(self) -> ModelPusherConfig:
         pass
 
     def get_training_pipeline_config(self) -> TrainingPipelineConfig:
