@@ -100,9 +100,7 @@ class ModelTrainer:
                                                           test_rmse=metric_info.test_rmse,
                                                           train_accuracy=metric_info.train_accuracy,
                                                           test_accuracy=metric_info.test_accuracy,
-                                                          model_accuracy=metric_info.model_accuracy
-
-                                                          )
+                                                          model_accuracy=metric_info.model_accuracy)
 
             logging.info(f"Model Trainer Artifact: {model_trainer_artifact}")
             return model_trainer_artifact

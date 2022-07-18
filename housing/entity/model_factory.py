@@ -58,7 +58,7 @@ def evaluate_regression_model(model_list: list, X_train: np.ndarray, y_train: np
     y_test: Testing dataset input feature
 
     return
-    It retured a named tuple
+    It returned a named tuple
 
     MetricInfoArtifact = namedtuple("MetricInfo",
                                 ["model_name", "model_object", "train_rmse", "test_rmse", "train_accuracy",
@@ -129,30 +129,23 @@ def get_sample_model_config_yaml_file(export_dir: str):
                 CLASS_KEY: "GridSearchCV",
                 PARAM_KEY: {
                     "cv": 3,
-                    "verbose": 1
-                }
-
-            },
+                    "verbose": 1}},
             MODEL_SELECTION_KEY: {
                 "module_0": {
                     MODULE_KEY: "module_of_model",
                     CLASS_KEY: "ModelClassName",
                     PARAM_KEY:
                         {"param_name1": "value1",
-                         "param_name2": "value2",
-                         },
+                         "param_name2": "value2",},
                     SEARCH_PARAM_GRID_KEY: {
-                        "param_name": ['param_value_1', 'param_value_2']
-                    }
+                        "param_name": ['param_value_1', 'param_value_2']}}}}
 
-                },
-            }
-        }
         os.makedirs(export_dir, exist_ok=True)
         export_file_path = os.path.join(export_dir, "model.yaml")
         with open(export_file_path, 'w') as file:
             yaml.dump(model_config, file)
         return export_file_path
+
     except Exception as e:
         raise HousingException(e, sys)
 
