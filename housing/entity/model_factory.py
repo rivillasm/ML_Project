@@ -150,6 +150,7 @@ def get_sample_model_config_yaml_file(export_dir: str):
 class ModelFactory:
     def __init__(self, model_config_path: str = None, ):
         try:
+
             # gets the info about the models, from config.yaml
             self.config: dict = ModelFactory.read_params(model_config_path)
 
@@ -192,6 +193,8 @@ class ModelFactory:
     def class_for_name(module_name: str, class_name: str):
         try:
             # load the module, will raise ImportError if module cannot be loaded
+            print(f"***** {module_name} ****")
+
             module = importlib.import_module(module_name)
             # get the class, will raise AttributeError if class cannot be found
             logging.info(f"Executing command: from {module} import {class_name}")

@@ -69,9 +69,9 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):  # custom generator
             if self.add_bedrooms_per_room:
                 bedrooms_per_room = X[:, self.total_bedrooms_ix] / X[:, self.total_rooms_ix]
                 # concatenates the different variables
-                generated_feature = np.c[X, room_per_household, population_per_household, bedrooms_per_room]
+                generated_feature = np.c_[X, room_per_household, population_per_household, bedrooms_per_room]
             else:
-                generated_feature = np.c[X, room_per_household, population_per_household]
+                generated_feature = np.c_[X, room_per_household, population_per_household]
             return generated_feature
 
         except Exception as e:
