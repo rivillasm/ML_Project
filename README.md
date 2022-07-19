@@ -1,5 +1,8 @@
 # ML_Project
 
+Application url:
+[HousingPredictor](https://ml-regression-app.herokuapp.com/)
+
 ### Software requirements:
 1. [github account](https://github.com/)
 2. [Heroku account](https://dashboard.heroku.com/login)
