@@ -153,12 +153,14 @@ def get_sample_model_config_yaml_file(export_dir: str):
 class ModelFactory:
     def __init__(self, model_config_path: str = None, ):
         try:
+            # gets the info about the models, from config.yaml
             self.config: dict = ModelFactory.read_params(model_config_path)
 
             self.grid_search_cv_module: str = self.config[GRID_SEARCH_KEY][MODULE_KEY]
             self.grid_search_class_name: str = self.config[GRID_SEARCH_KEY][CLASS_KEY]
             self.grid_search_property_data: dict = dict(self.config[GRID_SEARCH_KEY][PARAM_KEY])
 
+            # gets info about the models to use, from config.yaml
             self.models_initialization_config: dict = dict(self.config[MODEL_SELECTION_KEY])
 
             self.initialized_model_list = None
@@ -217,8 +219,7 @@ class ModelFactory:
             # instantiating GridSearchCV class
 
             grid_search_cv_ref = ModelFactory.class_for_name(module_name=self.grid_search_cv_module,
-                                                             class_name=self.grid_search_class_name
-                                                             )
+                                                             class_name=self.grid_search_class_name)
 
             grid_search_cv = grid_search_cv_ref(estimator=initialized_model.model,
                                                 param_grid=initialized_model.param_grid_search)
@@ -233,8 +234,7 @@ class ModelFactory:
                                                              model=initialized_model.model,
                                                              best_model=grid_search_cv.best_estimator_,
                                                              best_parameters=grid_search_cv.best_params_,
-                                                             best_score=grid_search_cv.best_score_
-                                                             )
+                                                             best_score=grid_search_cv.best_score_)
 
             return grid_searched_best_model
         except Exception as e:
@@ -247,13 +247,12 @@ class ModelFactory:
         """
         try:
             initialized_model_list = []
-            for model_serial_number in self.models_initialization_config.keys():
+            for model_serial_number in self.models_initialization_config.keys():  # gets model_0 and model_1 as per yaml
 
                 model_initialization_config = self.models_initialization_config[model_serial_number]
                 model_obj_ref = ModelFactory.class_for_name(module_name=model_initialization_config[MODULE_KEY],
-                                                            class_name=model_initialization_config[CLASS_KEY]
-                                                            )
-                model = model_obj_ref()
+                                                            class_name=model_initialization_config[CLASS_KEY])
+                model = model_obj_ref()    # initializes the model object, ejm: LinerRegression()
 
                 if PARAM_KEY in model_initialization_config:
                     model_obj_property_data = dict(model_initialization_config[PARAM_KEY])
@@ -266,13 +265,13 @@ class ModelFactory:
                 model_initialization_config = InitializedModelDetail(model_serial_number=model_serial_number,
                                                                      model=model,
                                                                      param_grid_search=param_grid_search,
-                                                                     model_name=model_name
-                                                                     )
+                                                                     model_name=model_name)
 
                 initialized_model_list.append(model_initialization_config)
 
             self.initialized_model_list = initialized_model_list
             return self.initialized_model_list
+
         except Exception as e:
             raise HousingException(e, sys) from e
 
@@ -280,10 +279,10 @@ class ModelFactory:
                                                              input_feature,
                                                              output_feature) -> GridSearchedBestModel:
         """
-        initiate_best_model_parameter_search(): function will perform paramter search operation and
-        it will return you the best optimistic  model with best paramter:
+        initiate_best_model_parameter_search(): function will perform parameter search operation and
+        it will return you the best optimistic  model with best parameter:
         estimator: Model object
-        param_grid: dictionary of paramter to perform search operation
+        param_grid: dictionary of parameter to perform search operation
         input_feature: your all input features
         output_feature: Target/Dependent features
         ================================================================================
@@ -307,8 +306,7 @@ class ModelFactory:
                 grid_searched_best_model = self.initiate_best_parameter_search_for_initialized_model(
                     initialized_model=initialized_model_list,
                     input_feature=input_feature,
-                    output_feature=output_feature
-                )
+                    output_feature=output_feature)
                 self.grid_searched_best_model_list.append(grid_searched_best_model)
             return self.grid_searched_best_model_list
         except Exception as e:

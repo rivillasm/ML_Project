@@ -1,32 +1,22 @@
-
+import os
+import pandas as pd
+import sys
+import uuid
 from collections import namedtuple
 from datetime import datetime
-import uuid
-
-from housing.logger import logging, get_log_file_name
-from housing.exception import HousingException
-from threading import Thread
-from typing import List
-from multiprocessing import Process
-
-from housing.config.configuration import Configuration
-from housing.logger import logging
-from housing.exception import HousingException
-from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
-from housing.entity.artifact_entity import ModelTrainerArtifact, ModelPusherArtifact,  ModelEvaluationArtifact
-from housing.entity.config_entity import DataIngestionConfig, ModelEvaluationConfig
 from housing.component.data_ingestion import DataIngestion
-from housing.component.data_validation import DataValidation
 from housing.component.data_trasnformation import DataTransformation
-from housing.component.model_trainer import ModelTrainer
-import os,sys
+from housing.component.data_validation import DataValidation
 from housing.component.model_evaluation import ModelEvaluation
 from housing.component.model_pusher import ModelPusher
-
-from collections import namedtuple
-from datetime import datetime
-import pandas as pd
+from housing.component.model_trainer import ModelTrainer
+from housing.config.configuration import Configuration
 from housing.constant import EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME
+from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
+from housing.entity.artifact_entity import ModelTrainerArtifact, ModelPusherArtifact, ModelEvaluationArtifact
+from housing.exception import HousingException
+from housing.logger import logging
+from threading import Thread
 
 Experiment = namedtuple("Experiment", ["experiment_id", "initialization_timestamp", "artifact_time_stamp",
                                        "running_status", "start_time", "stop_time", "execution_time", "message",
@@ -37,16 +27,16 @@ class Pipeline(Thread):
     experiment: Experiment = Experiment(*([None] * 11))
     experiment_file_path = None
 
-    def __init__(self, config: Configuration ) -> None:
+    def __init__(self, config: Configuration) -> None:
         try:
             os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
-            Pipeline.experiment_file_path=os.path.join(config.training_pipeline_config.artifact_dir,
-                                                       EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
+            Pipeline.experiment_file_path = os.path.join(config.training_pipeline_config.artifact_dir,
+                                                         EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
             super().__init__(daemon=False, name="pipeline")
-            self.config=config
+            self.config = config
 
         except Exception as e:
-            raise HousingException(e,sys) from e
+            raise HousingException(e, sys) from e
 
     def start_data_ingestion(self) -> DataIngestionArtifact:
         try:
@@ -55,10 +45,10 @@ class Pipeline(Thread):
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifact) -> DataIngestionArtifact:
+    def start_data_validation(self, data_ingestion_artifact: DataIngestionArtifact) -> DataValidationArtifact:
         try:
             data_validation = DataValidation(data_validation_config=self.config.get_data_validation_config(),
-                                             data_ingestion_artifact= data_ingestion_artifact)
+                                             data_ingestion_artifact=data_ingestion_artifact)
             return data_validation.initiate_data_validation()
         except Exception as e:
             raise HousingException(e, sys) from e
@@ -77,7 +67,7 @@ class Pipeline(Thread):
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def start_model_trainer(self, data_transformation_artifact:DataTransformationArtifact) -> ModelTrainerArtifact:
+    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainerArtifact:
         try:
             model_trainer = ModelTrainer(model_trainer_config=self.config.get_model_trainer_config(),
                                          data_transformation_artifact=data_transformation_artifact)
@@ -86,7 +76,6 @@ class Pipeline(Thread):
 
         except Exception as e:
             raise HousingException(e, sys) from e
-
 
     def start_model_evaluation(self, data_ingestion_artifact: DataIngestionArtifact,
                                data_validation_artifact: DataValidationArtifact,
@@ -101,7 +90,6 @@ class Pipeline(Thread):
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
     def start_model_pusher(self, model_eval_artifact: ModelEvaluationArtifact) -> ModelPusherArtifact:
         try:
             model_pusher = ModelPusher(
@@ -112,8 +100,7 @@ class Pipeline(Thread):
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
-        def run_pipeline(self):
+    def run_pipeline(self):
         try:
             if Pipeline.experiment.running_status:
                 logging.info("Pipeline is already running")
@@ -142,14 +129,14 @@ class Pipeline(Thread):
             data_ingestion_artifact = self.start_data_ingestion()
             data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact = self.start_data_transformation(
-                data_ingestion_artifact=data_ingestion_artifact,
-                data_validation_artifact=data_validation_artifact
-            )
+                                            data_ingestion_artifact=data_ingestion_artifact,
+                                            data_validation_artifact=data_validation_artifact)
             model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
 
-            model_evaluation_artifact = self.start_model_evaluation(data_ingestion_artifact=data_ingestion_artifact,
-                                                                    data_validation_artifact=data_validation_artifact,
-                                                                    model_trainer_artifact=model_trainer_artifact)
+            model_evaluation_artifact = self.start_model_evaluation(
+                                            data_ingestion_artifact=data_ingestion_artifact,
+                                            data_validation_artifact=data_validation_artifact,
+                                            model_trainer_artifact=model_trainer_artifact)
 
             if model_evaluation_artifact.is_model_accepted:
                 model_pusher_artifact = self.start_model_pusher(model_eval_artifact=model_evaluation_artifact)
@@ -169,14 +156,13 @@ class Pipeline(Thread):
                                              message="Pipeline has been completed.",
                                              experiment_file_path=Pipeline.experiment_file_path,
                                              is_model_accepted=model_evaluation_artifact.is_model_accepted,
-                                             accuracy=model_trainer_artifact.model_accuracy
-                                             )
+                                             accuracy=model_trainer_artifact.model_accuracy)
             logging.info(f"Pipeline experiment: {Pipeline.experiment}")
             self.save_experiment()
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    def run(self):
+    def run(self):    # when you call the start function it will run this part automatically
         try:
             self.run_pipeline()
         except Exception as e:
@@ -216,4 +202,3 @@ class Pipeline(Thread):
                 return pd.DataFrame()
         except Exception as e:
             raise HousingException(e, sys) from e
-
