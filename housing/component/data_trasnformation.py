@@ -2,7 +2,8 @@ from housing.exception import HousingException
 from housing.logger import logging
 from housing.entity.config_entity import DataTransformationConfig
 from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
-import sys, os
+import sys
+import os
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin  # base class for all estimators in scikit-learn
@@ -139,7 +140,6 @@ class DataTransformation:
             schema = read_yaml_file(file_path=schema_file_path)
             target_column_name = schema[TARGET_COLUMN_KEY]
 
-
             logging.info(f"Splitting input/target feature from training/testing dataframes.")
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             target_feature_train_df = train_df[target_column_name]
@@ -147,7 +147,6 @@ class DataTransformation:
             target_feature_test_df = test_df[target_column_name]
 
             print(input_feature_train_df)
-
 
             logging.info(f"Applying  preprocessing object on training/testing dataframes. ")
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)

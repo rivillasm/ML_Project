@@ -108,7 +108,7 @@ class Pipeline(Thread):
             # data ingestion
             logging.info("Pipeline starting.")
 
-            experiment_id = str(uuid.uuid4())
+            experiment_id = str(uuid.uuid4())  # creates a global unique id
 
             Pipeline.experiment = Experiment(experiment_id=experiment_id,
                                              initialization_timestamp=self.config.time_stamp,

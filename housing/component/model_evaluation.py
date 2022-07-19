@@ -8,10 +8,8 @@ from housing.constant import *
 import numpy as np
 import os
 import sys
-from housing.util.util import write_yaml_file, read_yaml_file, load_object ,load_data
+from housing.util.util import write_yaml_file, read_yaml_file, load_object, load_data
 from housing.entity.model_factory import evaluate_regression_model
-
-
 
 
 class ModelEvaluation:

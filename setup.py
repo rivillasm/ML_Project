@@ -1,17 +1,15 @@
-from setuptools import setup, find_packages
+
 from typing import List
+from setuptools import setup, find_packages   # it will automatically find folders(PACKAGES) holding an _init__.py file
 
-
-
-
-# declering variables for setup functions
+# declaring variables for setup functions
 PROJECT_NAME = "housing_predictor"
 VERSION = "0.0.1"            # any sequential number
 AUTHOR = "Mario"
 DESCRIPTION = "First FSDS batch ML project"
-PACKAGES = find_packages()  # expecting "housing" the folder name,
-                            # it will automatically find folderes(PACKAGES) holding an _init__.py file
 REQUIREMENT_FILE_NAME="requirements.txt"
+HYPHEN_E_DOT = "-e ."
+
 
 def get_requirements_list()->List[str]:
     """
@@ -21,7 +19,12 @@ def get_requirements_list()->List[str]:
     return: a list which will contain name of libraries mentioned in the file
     """
     with open(REQUIREMENT_FILE_NAME) as requirement_file:
-        return requirement_file.readlines().remove("-e .")
+        requirement_list = requirement_file.readlines()
+        requirement_list = [requirement_name.replace("\n", "") for requirement_name in requirement_list]
+        if HYPHEN_E_DOT in requirement_list:
+            requirement_list.remove(HYPHEN_E_DOT)
+        return requirement_list
+
 
 setup(
     name=PROJECT_NAME,

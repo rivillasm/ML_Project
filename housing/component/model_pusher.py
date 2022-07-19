@@ -2,7 +2,8 @@ from housing.logger import logging
 from housing.exception import HousingException
 from housing.entity.artifact_entity import ModelPusherArtifact, ModelEvaluationArtifact
 from housing.entity.config_entity import ModelPusherConfig
-import os, sys
+import os
+import sys
 import shutil    # used to copy the content of source file to destination file or directory
 
 
@@ -42,14 +43,12 @@ class ModelPusher:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-
     def initiate_model_pusher(self) -> ModelPusherArtifact:
         try:
             return self.export_model()
 
         except Exception as e:
             raise HousingException(e, sys) from e
-
 
     def __del__(self):
         logging.info(f"{'>>' * 20}Model Pusher log completed.{'<<' * 20} ")

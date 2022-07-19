@@ -19,13 +19,13 @@ class HousingEstimatorModel:
         self.preprocessing_object = preprocessing_object
         self.trained_model_object = trained_model_object
 
-    def predict(self, X):
+    def predict(self, x):
         """
         function accepts raw inputs and then transformed raw input using preprocessing_object
-        which gurantees that the inputs are in the same format as the training data
+        which guarantees that the inputs are in the same format as the training data
         At last it perform prediction on transformed features
         """
-        transformed_feature = self.preprocessing_object.transform(X)
+        transformed_feature = self.preprocessing_object.transform(x)
         return self.trained_model_object.predict(transformed_feature)
 
     def __repr__(self):

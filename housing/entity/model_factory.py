@@ -1,16 +1,13 @@
-from cmath import log
-import importlib
-from pyexpat import model
-import numpy as np
-import yaml
-from housing.exception import HousingException
-import os
 import sys
-
+import importlib
+import numpy as np
+import os
+import yaml
 from collections import namedtuple
-from typing import List
+from housing.exception import HousingException
 from housing.logger import logging
 from sklearn.metrics import r2_score, mean_squared_error
+from typing import List
 
 GRID_SEARCH_KEY = 'grid_search'
 MODULE_KEY = 'module'
